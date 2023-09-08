@@ -6,7 +6,7 @@
 
     <groupId>me.jammy</groupId>
     <artifactId>SimpPixelExtras</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <version>1.0.0</version>
     <packaging>jar</packaging>
 
     <name>SimpPixelExtras</name>
@@ -35,6 +35,14 @@
             </resource>
         </resources>
     </build>
+
+    <distributionManagement>
+        <repository>
+            <id>github</id>
+            <name>GitHub Packages</name>
+            <url>https://maven.pkg.github.com/octocat/hello-world</url>
+        </repository>
+    </distributionManagement>
 
     <repositories>
         <repository>
