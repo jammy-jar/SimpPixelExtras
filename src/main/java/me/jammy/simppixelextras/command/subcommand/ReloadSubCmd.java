@@ -2,6 +2,7 @@ package me.jammy.simppixelextras.command.subcommand;
 
 import me.jammy.simppixelextras.SimpPixelExtras;
 import me.jammy.simppixelextras.command.SubCommand;
+import me.jammy.simppixelextras.config.Lang;
 import me.jammy.simppixelextras.config.Msgs;
 import org.bukkit.command.CommandSender;
 
@@ -43,7 +44,7 @@ public class ReloadSubCmd extends SubCommand {
     public boolean run(final CommandSender sender, final String[] args) {
         plugin.reloadConfig();
         plugin.getSignatureCfg().reload();
-        Msgs.of("<dark_green>Successfully reloaded the plugin.").send(sender);
+        Msgs.of(Lang.RELOAD_SUCCESSFUL.getLang()).send(sender);
         return true;
     }
 }

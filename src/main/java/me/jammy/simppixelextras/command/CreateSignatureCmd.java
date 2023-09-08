@@ -2,6 +2,7 @@ package me.jammy.simppixelextras.command;
 
 import com.google.common.collect.Lists;
 import me.jammy.simppixelextras.SimpPixelExtras;
+import me.jammy.simppixelextras.config.Lang;
 import me.jammy.simppixelextras.config.Msgs;
 import me.jammy.simppixelextras.permission.Permission;
 import net.kyori.adventure.audience.Audience;
@@ -19,6 +20,7 @@ import java.util.List;
 public class CreateSignatureCmd implements TabExecutor {
 
     private final SimpPixelExtras plugin;
+    private static final String SYNTAX = "<player> <signature>";
 
     public CreateSignatureCmd(SimpPixelExtras plugin) {
         this.plugin = plugin;
@@ -27,15 +29,14 @@ public class CreateSignatureCmd implements TabExecutor {
     @Override
     public boolean onCommand(CommandSender sender, @NotNull Command cmd, @NotNull String label, String[] args) {
         if (!sender.hasPermission(Permission.ADMIN_SIGNATURE.asPerm())) {
-            Msgs.of("<red>You have insufficient permissions to do this!").send(sender);
+            Msgs.of(Lang.INSUFFICIENT_PERMISSIONS.getLang()).send(sender);
             return true;
         }
 
-        String cmdNotRecognisedErr = """
-                <red>Command not Recognised!\s
-                <yellow>Usage:\s
-                <red>/<label> <player> <signature>
-                """.replace("<label>", label);
+        String cmdNotRecognisedErr = (Lang.INVALID_FORMAT_FIRST.getLang() + "<newline>"
+                + Lang.INVALID_FORMAT_SYNTAX)
+                .replace("<command>", label)
+                .replace("<syntax>", SYNTAX);
 
         ArrayList<String> params = Lists.newArrayList(args);
         if (args.length == 0) {
@@ -54,7 +55,7 @@ public class CreateSignatureCmd implements TabExecutor {
         final String signature = String.join(" ", params);
         plugin.getSignatureCfg().set(target.getUniqueId().toString(), signature);
 
-        Msgs.of("<yellow>Signature: <signature> <yellow>was successfully created for <light_purple><player><yellow>")
+        Msgs.of(Lang.SIG_CREATED_SUCCESS.getLang())
                 .cvar("signature", Msgs.of(signature).asComp())
                 .cvar("player", target.displayName())
                 .send(Audience.audience(sender, target));

@@ -1,17 +1,19 @@
 package me.jammy.simppixelextras.command;
 
+import com.google.common.collect.Lists;
 import me.jammy.simppixelextras.SimpPixelExtras;
 import me.jammy.simppixelextras.command.subcommand.ReloadSubCmd;
+import me.jammy.simppixelextras.config.Lang;
 import me.jammy.simppixelextras.config.Msgs;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabExecutor;
-import org.bukkit.entity.Player;
 import org.bukkit.util.StringUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.*;
+import java.util.List;
 
 public class SimpPixelCmd implements TabExecutor {
 
@@ -28,30 +30,24 @@ public class SimpPixelCmd implements TabExecutor {
                 continue;
 
             if (!sender.hasPermission(subCommand.getRequiredPermission())) {
-                Msgs.of("<red>You don't have permission to do this!").send(sender);
+                Msgs.of(Lang.INSUFFICIENT_PERMISSIONS.getLang()).send(sender);
                 return true;
             }
 
             if (!subCommand.run(sender, Arrays.copyOfRange(args, 1, args.length))) {
-                // TODO: Rework this bit as is messy.
-                StringBuilder builder = new StringBuilder("<red>Invalid Command! \n<yellow>Format: ");
+                List<String> msg = Lists.newArrayList(Lang.INVALID_FORMAT_FIRST.getLang());
+                subCommand.getSyntax().forEach(syn ->
+                        msg.add(Lang.INVALID_FORMAT_SYNTAX.getLang().replace("<syntax>", syn)));
+                String formatError = String.join("<newline>", msg);
 
-                List<String> syntaxList = subCommand.getSyntax();
-                for (int i = 0; i < syntaxList.size(); i++) {
-                    builder.append("\n<yellow> - /q ").append(syntaxList.get(i));
-                    if (i < syntaxList.size() - 1) {
-                        builder.append("\n<yellow> OR");
-                    }
-                }
-
-                Msgs.of(builder.toString()).send(sender);
+                Msgs.of(formatError).var("command", s).send(sender);
                 return true;
             }
 
             return true;
         }
 
-        Msgs.of("<red>This command does not exist!").send(sender);
+        Msgs.of(Lang.UNKNOWN_COMMAND.getLang()).send(sender);
         return true;
     }
 

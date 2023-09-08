@@ -18,6 +18,8 @@ public final class SimpPixelExtras extends JavaPlugin {
     private LandsIntegration landsApi = null;
     @Getter
     private Cfgs signatureCfg;
+    @Getter
+    private Cfgs langCfg;
 
     private void setupPlaceholderExpansion() {
         if (Bukkit.getPluginManager().getPlugin("PlaceholderAPI") != null)
@@ -45,6 +47,7 @@ public final class SimpPixelExtras extends JavaPlugin {
 
     private void registerConfigs() {
         signatureCfg = Cfgs.of("signatures.yml");
+        langCfg = Cfgs.of("lang.yml");
     }
 
     @Override

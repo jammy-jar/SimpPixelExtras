@@ -2,6 +2,7 @@ package me.jammy.simppixelextras.command;
 
 import com.google.common.collect.Lists;
 import me.jammy.simppixelextras.SimpPixelExtras;
+import me.jammy.simppixelextras.config.Lang;
 import me.jammy.simppixelextras.config.Msgs;
 import me.jammy.simppixelextras.permission.Permission;
 import net.kyori.adventure.audience.Audience;
@@ -22,6 +23,8 @@ public class SignatureCmd implements TabExecutor {
 
     private final SimpPixelExtras plugin;
 
+    private static final String SYNTAX = "<player> <signature>";
+
     public SignatureCmd(SimpPixelExtras plugin) {
         this.plugin = plugin;
     }
@@ -29,15 +32,14 @@ public class SignatureCmd implements TabExecutor {
     @Override
     public boolean onCommand(CommandSender sender, @NotNull Command cmd, @NotNull String label, String[] args) {
         if (!sender.hasPermission(Permission.SIGNATURE.asPerm())) {
-            Msgs.of("<red>You have insufficient permissions to do this!").send(sender);
+            Msgs.of(Lang.INSUFFICIENT_PERMISSIONS.getLang()).send(sender);
             return true;
         }
 
-        String cmdNotRecognisedErr = """
-                <red>Command not Recognised!\s
-                <yellow>Usage:\s
-                <red>/<label> <player (default: <yellow>You<red>)> (optional: -o)
-                """.replace("<label>", label);
+        String cmdNotRecognisedErr = (Lang.INVALID_FORMAT_FIRST.getLang() + "<newline>"
+                + Lang.INVALID_FORMAT_SYNTAX)
+                .replace("<command>", label)
+                .replace("<syntax>", SYNTAX);
         boolean offhand = false;
 
         ArrayList<String> params = Lists.newArrayList(args);
@@ -62,13 +64,13 @@ public class SignatureCmd implements TabExecutor {
             signature = Msgs.of(String.join(" ", params)).asComp();
         else {
             if (!(sender instanceof Player)) {
-                Msgs.of("<red>You are not a player! To apply a signature enter a custom signature after the player name.").send(sender);
+                Msgs.of(Lang.SIG_CONSOLE_ERR.getLang()).send(sender);
                 return true;
             }
 
             String cfgValue = plugin.getSignatureCfg().get().getString(((Player) sender).getUniqueId().toString());
             if (cfgValue == null) {
-                Msgs.of("<red>You do not have a signature! Speak with management to amend this.").send(sender);
+                Msgs.of(Lang.NO_EXISTING_SIG.getLang()).send(sender);
                 return true;
             }
             else
@@ -87,18 +89,18 @@ public class SignatureCmd implements TabExecutor {
         });
 
         if (item.getType() == Material.AIR) {
-            Msgs.of("<red>You cannot sign air!").send(sender);
+            Msgs.of(Lang.SIG_AIR_ERR.getLang()).send(sender);
             return true;
         }
 
 
-        Msgs.of("<yellow>Signature: <signature> <yellow>was successfully applied to <light_purple><player><yellow>'s <item>")
+        Msgs.of(Lang.SIG_APPLIED_SUCCESS.getLang())
                 .cvar("signature", signature)
                 .cvar("player", target.displayName())
                 .cvar("item", item.displayName())
                 .send(sender);
 
-        Msgs announcement = Msgs.of("<aqua><sender> <yellow>signed <light_purple><player><yellow>'s <item><yellow>! With signature: <dark_purple><signature>")
+        Msgs announcement = Msgs.of(Lang.SIG_APPLIED_BROADCAST.getLang())
                 .cvar("player", target.displayName())
                 .cvar("item", item.displayName())
                 .cvar("signature", signature);

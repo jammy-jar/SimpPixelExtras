@@ -1,0 +1,17 @@
+main:
+  reload-successful: "<dark_green>Successfully reloaded the plugin."
+  insufficient-permissions: "<red>You don't have permission to do this!"
+  invalid-format:
+    first: "<red>Invalid Format! <newline><yellow>Usage: "
+    syntax: "<yellow> • /<command> <syntax>"
+  unknown-command: "<red>Unknown Command! This command does not exist."
+
+
+create-signature-cmd:
+  sig-created: "<yellow>Signature: <signature> <yellow>was successfully created for <light_purple><player><yellow>"
+signature-cmd:
+  console-err: "<red>You are not a player! To apply a signature enter a custom signature after the player name."
+  no-existing-sig: "<red>You do not have a signature! Speak with management to amend this."
+  sig-air-err: "<red>You cannot sign air!"
+  sig-applied-success: "<yellow>Signature: <signature> <yellow>was successfully applied to <light_purple><player><yellow>'s <item>"
+  sig-applied-broadcast: "<aqua><sender> <yellow>signed <light_purple><player><yellow>'s <item><yellow>! With signature: <dark_purple><signature>"
