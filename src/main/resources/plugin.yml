@@ -1,0 +1,16 @@
+name: SimpPixelExtras
+version: '${project.version}'
+main: me.jammy.simppixelextras.SimpPixelExtras
+api-version: '1.20'
+
+commands:
+  signature:
+    description: Sign a players item.
+    usage: /<command> <player (optional)>
+    permission: simppixel.signature
+    aliases: [ sig ]
+  createsignature:
+    description: Admin command to create a signature for a staff member.
+    usage: /<command> <player> <signature>
+    permission: simppixel.admin.signature
+    aliases: [ createsig, newsig, makesig, newsignature, makesignature ]
