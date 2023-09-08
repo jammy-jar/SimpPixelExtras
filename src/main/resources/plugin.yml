@@ -4,6 +4,11 @@ main: me.jammy.simppixelextras.SimpPixelExtras
 api-version: '1.20'
 
 commands:
+  simppixel:
+    description: Main command for managing the plugin.
+    usage: /<command> <args>
+    permission: simppixel.admin
+    aliases: [ sp, spn, spe, simppixelextras ]
   signature:
     description: Sign a players item.
     usage: /<command> <player (optional)>

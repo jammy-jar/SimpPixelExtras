@@ -3,6 +3,7 @@ package me.jammy.simppixelextras;
 import lombok.Getter;
 import me.jammy.simppixelextras.command.CreateSignatureCmd;
 import me.jammy.simppixelextras.command.SignatureCmd;
+import me.jammy.simppixelextras.command.SimpPixelCmd;
 import me.jammy.simppixelextras.config.Cfgs;
 import me.jammy.simppixelextras.placeholder.SimpPixelExpansion;
 import org.bukkit.Bukkit;
@@ -39,6 +40,7 @@ public final class SimpPixelExtras extends JavaPlugin {
 
         this.getCommand("signature").setExecutor(new SignatureCmd(this));
         this.getCommand("createsignature").setExecutor(new CreateSignatureCmd(this));
+        this.getCommand("simppixel").setExecutor(new SimpPixelCmd(this));
     }
 
     private void registerConfigs() {
