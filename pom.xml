@@ -39,8 +39,8 @@
     <distributionManagement>
         <repository>
             <id>github</id>
-            <name>GitHub Packages</name>
-            <url>https://maven.pkg.github.com/jammy-jar/SimpPixelExtras</url>
+            <name>GitHub Jammy-jar Packages</name>
+            <url>https://github.com/jammy-jar/SimpPixelExtras/tree/main/src/main/java</url>
         </repository>
     </distributionManagement>
 
