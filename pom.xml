@@ -40,7 +40,7 @@
         <repository>
             <id>github</id>
             <name>GitHub Jammy-jar Packages</name>
-            <url>https://github.com/jammy-jar/SimpPixelExtras/tree/main/src/main/java</url>
+            <url>https://maven.pkg.github.com/jammy-jar/SimpPixelExtras/</url>
         </repository>
     </distributionManagement>
 
