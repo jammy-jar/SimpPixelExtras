@@ -61,6 +61,10 @@
             <id>placeholderapi</id>
             <url>https://repo.extendedclip.com/content/repositories/placeholderapi/</url>
         </repository>
+        <repository>
+            <id>local-repo</id>
+            <url>file://${user.home}/.m2/repository</url>
+        </repository>
     </repositories>
 
     <dependencies>
@@ -87,6 +91,11 @@
             <artifactId>lombok</artifactId>
             <version>1.18.28</version>
             <scope>compile</scope>
+        </dependency>
+        <dependency>
+            <groupId>me.dthbr.utils</groupId>
+            <artifactId>DeathUtils</artifactId>
+            <version>1.0.0</version>
         </dependency>
     </dependencies>
 </project>

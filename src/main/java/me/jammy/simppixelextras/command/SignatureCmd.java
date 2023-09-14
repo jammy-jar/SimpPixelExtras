@@ -1,9 +1,9 @@
 package me.jammy.simppixelextras.command;
 
 import com.google.common.collect.Lists;
+import me.dthbr.utils.config.Msgs;
 import me.jammy.simppixelextras.SimpPixelExtras;
 import me.jammy.simppixelextras.config.Lang;
-import me.jammy.simppixelextras.config.Msgs;
 import me.jammy.simppixelextras.permission.Permission;
 import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.text.Component;
@@ -17,7 +17,8 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.StringUtil;
 import org.jetbrains.annotations.NotNull;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class SignatureCmd implements TabExecutor {
 
@@ -30,16 +31,16 @@ public class SignatureCmd implements TabExecutor {
     }
 
     @Override
-    public boolean onCommand(CommandSender sender, @NotNull Command cmd, @NotNull String label, String[] args) {
-        if (!sender.hasPermission(Permission.SIGNATURE.asPerm())) {
-            Msgs.of(Lang.INSUFFICIENT_PERMISSIONS.getLang()).send(sender);
+    public boolean onCommand(@NotNull CommandSender sender, @NotNull Command cmd, @NotNull String label, String[] args) {
+        if (!Permission.SIGNATURE.hasPerm(sender)) {
+            Msgs.of(Lang.INSUFFICIENT_PERMISSIONS.getString()).send(sender);
             return true;
         }
 
-        String cmdNotRecognisedErr = (Lang.INVALID_FORMAT_FIRST.getLang() + "<newline>"
-                + Lang.INVALID_FORMAT_SYNTAX)
-                .replace("<command>", label)
-                .replace("<syntax>", SYNTAX);
+        Msgs cmdNotRecognisedMsg = Msgs.of(Lang.INVALID_FORMAT_FIRST.getString() + "<newline>" + Lang.INVALID_FORMAT_SYNTAX)
+                .var("command", label)
+                .var("syntax", SYNTAX);
+
         boolean offhand = false;
 
         ArrayList<String> params = Lists.newArrayList(args);
@@ -53,24 +54,24 @@ public class SignatureCmd implements TabExecutor {
 
         // If the command is sent by the console, but the details are wrong, an error is sent.
         if (!(sender instanceof Player) && (target == null || params.size() == 0)) {
-            Msgs.of(cmdNotRecognisedErr).send(sender);
+            cmdNotRecognisedMsg.send(sender);
             return true;
         }
         if (target == null)
             target = (Player) sender;
 
         final Component signature;
-        if (sender.hasPermission(Permission.ADMIN_SIGNATURE.asPerm()) && params.size() > 0)
+        if (Permission.ADMIN_SIGNATURE.hasPerm(sender) && params.size() > 0)
             signature = Msgs.of(String.join(" ", params)).asComp();
         else {
             if (!(sender instanceof Player)) {
-                Msgs.of(Lang.SIG_CONSOLE_ERR.getLang()).send(sender);
+                Msgs.of(Lang.SIG_CONSOLE_ERR.getString()).send(sender);
                 return true;
             }
 
             String cfgValue = plugin.getSignatureCfg().get().getString(((Player) sender).getUniqueId().toString());
             if (cfgValue == null) {
-                Msgs.of(Lang.NO_EXISTING_SIG.getLang()).send(sender);
+                Msgs.of(Lang.NO_EXISTING_SIG.getString()).send(sender);
                 return true;
             }
             else
@@ -89,18 +90,18 @@ public class SignatureCmd implements TabExecutor {
         });
 
         if (item.getType() == Material.AIR) {
-            Msgs.of(Lang.SIG_AIR_ERR.getLang()).send(sender);
+            Msgs.of(Lang.SIG_AIR_ERR.getString()).send(sender);
             return true;
         }
 
 
-        Msgs.of(Lang.SIG_APPLIED_SUCCESS.getLang())
+        Msgs.of(Lang.SIG_APPLIED_SUCCESS.getString())
                 .cvar("signature", signature)
                 .cvar("player", target.displayName())
                 .cvar("item", item.displayName())
                 .send(sender);
 
-        Msgs announcement = Msgs.of(Lang.SIG_APPLIED_BROADCAST.getLang())
+        Msgs announcement = Msgs.of(Lang.SIG_APPLIED_BROADCAST.getString())
                 .cvar("player", target.displayName())
                 .cvar("item", item.displayName())
                 .cvar("signature", signature);

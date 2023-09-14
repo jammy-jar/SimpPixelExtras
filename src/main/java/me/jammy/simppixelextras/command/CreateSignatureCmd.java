@@ -1,9 +1,9 @@
 package me.jammy.simppixelextras.command;
 
 import com.google.common.collect.Lists;
+import me.dthbr.utils.config.Msgs;
 import me.jammy.simppixelextras.SimpPixelExtras;
 import me.jammy.simppixelextras.config.Lang;
-import me.jammy.simppixelextras.config.Msgs;
 import me.jammy.simppixelextras.permission.Permission;
 import net.kyori.adventure.audience.Audience;
 import org.bukkit.Bukkit;
@@ -27,20 +27,19 @@ public class CreateSignatureCmd implements TabExecutor {
     }
 
     @Override
-    public boolean onCommand(CommandSender sender, @NotNull Command cmd, @NotNull String label, String[] args) {
-        if (!sender.hasPermission(Permission.ADMIN_SIGNATURE.asPerm())) {
-            Msgs.of(Lang.INSUFFICIENT_PERMISSIONS.getLang()).send(sender);
+    public boolean onCommand(@NotNull CommandSender sender, @NotNull Command cmd, @NotNull String label, String[] args) {
+        if (!Permission.ADMIN_SIGNATURE.hasPerm(sender)) {
+            Msgs.of(Lang.INSUFFICIENT_PERMISSIONS.getString()).send(sender);
             return true;
         }
 
-        String cmdNotRecognisedErr = (Lang.INVALID_FORMAT_FIRST.getLang() + "<newline>"
-                + Lang.INVALID_FORMAT_SYNTAX)
-                .replace("<command>", label)
-                .replace("<syntax>", SYNTAX);
+        Msgs cmdNotRecognisedMsg = Msgs.of(Lang.INVALID_FORMAT_FIRST.getString() + "<newline>" + Lang.INVALID_FORMAT_SYNTAX)
+                .var("command", label)
+                .var("syntax", SYNTAX);
 
         ArrayList<String> params = Lists.newArrayList(args);
         if (args.length == 0) {
-            Msgs.of(cmdNotRecognisedErr).send(sender);
+            cmdNotRecognisedMsg.send(sender);
             return true;
         }
 
@@ -48,14 +47,14 @@ public class CreateSignatureCmd implements TabExecutor {
 
         // If the command is sent by the console, but the details are wrong, an error is sent.
         if (target == null || params.size() == 0) {
-            Msgs.of(cmdNotRecognisedErr).send(sender);
+            cmdNotRecognisedMsg.send(sender);
             return true;
         }
 
         final String signature = String.join(" ", params);
         plugin.getSignatureCfg().set(target.getUniqueId().toString(), signature);
 
-        Msgs.of(Lang.SIG_CREATED_SUCCESS.getLang())
+        Msgs.of(Lang.SIG_CREATED_SUCCESS.getString())
                 .cvar("signature", Msgs.of(signature).asComp())
                 .cvar("player", target.displayName())
                 .send(Audience.audience(sender, target));

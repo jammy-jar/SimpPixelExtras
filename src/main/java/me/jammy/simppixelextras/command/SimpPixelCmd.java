@@ -1,10 +1,10 @@
 package me.jammy.simppixelextras.command;
 
 import com.google.common.collect.Lists;
+import me.dthbr.utils.config.Msgs;
 import me.jammy.simppixelextras.SimpPixelExtras;
 import me.jammy.simppixelextras.command.subcommand.ReloadSubCmd;
 import me.jammy.simppixelextras.config.Lang;
-import me.jammy.simppixelextras.config.Msgs;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabExecutor;
@@ -12,8 +12,11 @@ import org.bukkit.util.StringUtil;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 public class SimpPixelCmd implements TabExecutor {
 
@@ -25,59 +28,55 @@ public class SimpPixelCmd implements TabExecutor {
 
     @Override
     public boolean onCommand(@NotNull final CommandSender sender, @NotNull final Command command, @NotNull final String s, final @NotNull String[] args) {
-        for (SubCommand subCommand : getSubCommands()) {
-            if (!args[0].equalsIgnoreCase(subCommand.getName()))
-                continue;
+        SubCommand subCmd = getSubCommands().stream()
+                .filter(subCommand -> args[0].equalsIgnoreCase(subCommand.getName()))
+                .findFirst().orElse(null);
 
-            if (!sender.hasPermission(subCommand.getRequiredPermission())) {
-                Msgs.of(Lang.INSUFFICIENT_PERMISSIONS.getLang()).send(sender);
-                return true;
-            }
-
-            if (!subCommand.run(sender, Arrays.copyOfRange(args, 1, args.length))) {
-                List<String> msg = Lists.newArrayList(Lang.INVALID_FORMAT_FIRST.getLang());
-                subCommand.getSyntax().forEach(syn ->
-                        msg.add(Lang.INVALID_FORMAT_SYNTAX.getLang().replace("<syntax>", syn)));
-                String formatError = String.join("<newline>", msg);
-
-                Msgs.of(formatError).var("command", s).send(sender);
-                return true;
-            }
-
-            return true;
+        if (subCmd == null) {
+            Msgs.of(Lang.UNKNOWN_COMMAND.getString()).send(sender);
+        } else if (!subCmd.getPerm().hasPerm(sender)) {
+            Msgs.of(Lang.INSUFFICIENT_PERMISSIONS.getString()).send(sender);
+        } else if (!subCmd.run(sender, Arrays.copyOfRange(args, 1, args.length))) {
+            Msgs.of(formatError(subCmd)).var("command", s).send(sender);
         }
 
-        Msgs.of(Lang.UNKNOWN_COMMAND.getLang()).send(sender);
         return true;
+
     }
 
     @Override
     public @Nullable List<String> onTabComplete(@NotNull final CommandSender sender, @NotNull final Command command, @NotNull final String s, final @NotNull String[] args) {
-        List<String> options = new ArrayList<>();
+        if (args.length == 1)
+            return matchingSub(sender, args);
+        return subCmdArgs(args);
+    }
 
-        if (args.length == 1) {
-            Set<String> subCommandNames = new HashSet<>();
+    private String formatError(SubCommand subCmd) {
+        List<String> msg = Lists.newArrayList(Lang.INVALID_FORMAT_FIRST.getString());
+        subCmd.getSyntax().forEach(syn ->
+                msg.add(Lang.INVALID_FORMAT_SYNTAX.getString().replace("<syntax>", syn)));
+        return String.join("<newline>", msg);
+    }
 
-            getSubCommands().forEach(subcommand -> {
-                if (sender.hasPermission(subcommand.getRequiredPermission()))
-                    subCommandNames.add(subcommand.getName());
-            });
+    private List<String> matchingSub(@NotNull final CommandSender sender, final @NotNull String[] args) {
+        Set<String> subCommandNames = getSubCommands().stream()
+                .filter(subCommand -> subCommand.getPerm().hasPerm(sender))
+                .map(SubCommand::getName)
+                .collect(Collectors.toSet());
 
-            options.addAll(StringUtil.copyPartialMatches(args[0], subCommandNames, new ArrayList<>()));
-        } else {
-            for (SubCommand subCommand : getSubCommands()) {
-                if (args[0].equalsIgnoreCase(subCommand.getName())) {
-                    if (subCommand.getArguments(Arrays.copyOfRange(args, 1, args.length)) == null)
-                        options = null;
-                    else {
-                        //noinspection DataFlowIssue
-                        options.addAll(StringUtil.copyPartialMatches(args[args.length - 1], subCommand.getArguments(Arrays.copyOfRange(args, 1, args.length)), new ArrayList<>()));
-                    }
-                }
-            }
-        }
+        return StringUtil.copyPartialMatches(args[0], subCommandNames, new ArrayList<>());
+    }
 
-        return options;
+    private List<String> subCmdArgs(final @NotNull String[] args) {
+        String[] restOfArgs = Arrays.copyOfRange(args, 1, args.length);
+        SubCommand subCmd = getSubCommands().stream()
+                .filter(subCommand -> args[0].equalsIgnoreCase(subCommand.getName()))
+                .filter(subCommand -> subCommand.getArguments(restOfArgs) != null)
+                .findFirst().orElse(null);
+
+        return subCmd == null ?
+                new ArrayList<>() :
+                StringUtil.copyPartialMatches(args[args.length - 1], subCmd.getArguments(restOfArgs), new ArrayList<>());
     }
 
     public List<SubCommand> getSubCommands() {

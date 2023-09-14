@@ -1,14 +1,14 @@
 package me.jammy.simppixelextras;
 
 import lombok.Getter;
+import me.angeschossen.lands.api.LandsIntegration;
+import me.dthbr.utils.config.Cfgs;
 import me.jammy.simppixelextras.command.CreateSignatureCmd;
 import me.jammy.simppixelextras.command.SignatureCmd;
 import me.jammy.simppixelextras.command.SimpPixelCmd;
-import me.jammy.simppixelextras.config.Cfgs;
 import me.jammy.simppixelextras.placeholder.SimpPixelExpansion;
 import org.bukkit.Bukkit;
 import org.bukkit.plugin.java.JavaPlugin;
-import me.angeschossen.lands.api.LandsIntegration;
 
 public final class SimpPixelExtras extends JavaPlugin {
 

@@ -6,8 +6,11 @@
         <sourceOutputDir name="target/generated-sources/annotations" />
         <sourceTestOutputDir name="target/generated-test-sources/test-annotations" />
         <outputRelativeToContentRoot value="true" />
-        <module name="SimpPixelExtras" />
+        <module name="simppixelextras" />
       </profile>
     </annotationProcessing>
+    <bytecodeTargetLevel>
+      <module name="SimpPixelExtras" target="16" />
+    </bytecodeTargetLevel>
   </component>
 </project>

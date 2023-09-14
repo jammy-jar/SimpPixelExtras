@@ -1,11 +1,13 @@
 package me.jammy.simppixelextras.command.subcommand;
 
+import me.dthbr.utils.config.Msgs;
 import me.jammy.simppixelextras.SimpPixelExtras;
 import me.jammy.simppixelextras.command.SubCommand;
 import me.jammy.simppixelextras.config.Lang;
-import me.jammy.simppixelextras.config.Msgs;
+import me.jammy.simppixelextras.permission.Permission;
 import org.bukkit.command.CommandSender;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class ReloadSubCmd extends SubCommand {
@@ -17,7 +19,7 @@ public class ReloadSubCmd extends SubCommand {
 
     @Override
     public String getName() {
-        return null;
+        return "reload";
     }
 
     @Override
@@ -27,24 +29,25 @@ public class ReloadSubCmd extends SubCommand {
 
     @Override
     public List<String> getSyntax() {
-        return null;
+        return List.of("reload");
     }
 
     @Override
-    public String getRequiredPermission() {
-        return null;
+    public Permission getPerm() {
+        return Permission.RELOAD;
     }
 
     @Override
     public List<String> getArguments(final String[] args) {
-        return null;
+        return new ArrayList<>();
     }
 
     @Override
     public boolean run(final CommandSender sender, final String[] args) {
         plugin.reloadConfig();
         plugin.getSignatureCfg().reload();
-        Msgs.of(Lang.RELOAD_SUCCESSFUL.getLang()).send(sender);
+        plugin.getLangCfg().reload();
+        Msgs.of(Lang.RELOAD_SUCCESSFUL.getString()).send(sender);
         return true;
     }
 }

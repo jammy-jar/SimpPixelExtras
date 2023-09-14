@@ -21,7 +21,7 @@ public enum Lang {
         this.path = path;
     }
 
-    public String getLang() {
+    public String getString() {
         return SimpPixelExtras.getInstance().getLangCfg().get().getString(path);
     }
 
